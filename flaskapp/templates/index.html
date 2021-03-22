@@ -1,0 +1,114 @@
+{% extends "main.html" %}
+{% block title %} Home {% endblock %}
+{% block content %}
+
+{% if error%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ error }}!</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+
+<main role="main" class="container">
+    <div class="container py-5">
+
+        <!-- For demo purpose -->
+        <header class="text-white text-center">
+            <h1 class="display-6">Upload Image to Generate</h1>
+        </header>
+        <div class="row py-4">
+            <div class="col-lg-6 mx-auto">
+
+                <form>
+                    <!-- Upload image input-->
+                    <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white
+            shadow-sm">
+                        <input id="upload" name="file" type="file" onchange="readURL(this);"
+                            class="form-control border-0">
+                        <div class="input-group-append">
+                            <label for="upload" class="btn btn-light m-0 rounded-pill
+                px-4"> <i class="fa fa-cloud-upload mr-2 text-muted"></i><small
+                                    class="text-uppercase font-weight-bold text-muted">Choose
+                                    file</small></label>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-4"></div>
+                        <div class="col-4">
+                            <button type="button" id="submit" class="btn btn-primary" data-toggle="button"
+                                aria-pressed="false" autocomplete="off">
+                                Generate
+                            </button>
+                        </div>
+                        <div class="col-4"></div>
+
+                    </div>
+
+                </form>
+
+                <!-- Uploaded image area-->
+                <p class="font-italic text-white text-center">The image uploaded
+                    will be rendered inside the box below.</p>
+                <div class="image-area
+          mt-4">
+                    <img id="imageResult" src="#" alt="" width="400" class="img-fluid
+            rounded shadow-sm mx-auto d-block">
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label class="text-white" for="copyMe">Generated Result Text</label>
+                        <textarea value="{{ text }}" id="copyMe" style="height: 50;" class="  form-control"
+                            rows="3">{{ text }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"></div>
+                        <div class="col-4">
+                            <button class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off"
+                                onclick="copyMyText()">Copy txt </button>
+                        </div>
+                        <div class="col-4"></div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-white" for="copyMe">You Can Paste Text here</label>
+                        <textarea value="{{ text }}" id="copyMe" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+
+    var formData = new FormData();
+
+    $(document).on('click', '#submit', function (e) {
+        formData.append('file', $('#upload')[0].files[0])
+        formData.append('action', '/')
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            success: function (response) {
+                document.close();
+                document.write(response);
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ":" + xhr.responseText)
+            }
+        })
+
+    })
+
+</script>
+{% endblock %}
